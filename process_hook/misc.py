@@ -17,11 +17,11 @@ def LoadAndAssign(path):
         TaskDb.taskOrder = taskOrder
         BindAttrs.taskIdCount = taskIdCount
     except FileNotFoundError:
-        print("Warning: TaskDb load fail (FileNotFoundError)")
+        print("Warning: local file load fail", "(FileNotFoundError)")
     except json.decoder.JSONDecodeError:
-        print("Warning: TaskDb load fail (JSONDecodeError)")
+        print("Warning: local file load fail", "(JSONDecodeError)")
     except KeyError:
-        print("Warning: TaskDb load fail (KeyError)")
+        print("Warning: local file load fail", "(KeyError)")
 
 def Dump(path):
     toDump = {
