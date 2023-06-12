@@ -8,6 +8,4 @@ def ProgramInit():
 
 
 def UiInit():
-    iids = TaskDb.GetIidsInOrder()
-    for iid in iids:
-        AddTaskList(iid)
+    RefreshTaskList()

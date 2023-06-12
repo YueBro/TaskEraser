@@ -9,3 +9,5 @@ def BindUi():
     UiItems.editTitle.bind("<<Modified>>", ModifyTask)
     UiItems.editDetail.bind("<<Modified>>", ModifyTask)
     UiItems.delBut.bind("<Button-1>", ClickDelBut)
+    UiItems.upBut.bind("<Button-1>", ClickUpBut)
+    UiItems.dnBut.bind("<Button-1>", ClickDnBut)
