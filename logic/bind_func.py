@@ -44,3 +44,23 @@ def ClickDelBut(evnt):
         DeleteTaskList(iid)
         ClearDisplay()
         TaskDb.RemoveTask(iid)
+
+
+def ClickUpBut(evnt):
+    print("ClickUpBut", evnt)
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    TaskDb.MoveUp(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)
+
+
+def ClickDnBut(evnt):
+    print("ClickDnBut", evnt)
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    TaskDb.MoveDn(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)

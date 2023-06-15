@@ -31,6 +31,36 @@ class TaskDb:
     def GetIidsInOrder(cls):
         return cls.taskOrder
 
+    @classmethod
+    def MoveUp(cls, taskId):
+        idx = None
+        for i, iid in enumerate(cls.taskOrder):
+            if iid == taskId:
+                idx = i
+                break
+        if idx is None:     # 没找到
+            return
+        
+        if idx == (len(cls.taskOrder) - 1):     # 已经到底（添加到order的顺序与显示上下是反的）
+            return
+        
+        cls.taskOrder[i], cls.taskOrder[i+1] = cls.taskOrder[i+1], cls.taskOrder[i]
+
+    @classmethod
+    def MoveDn(cls, taskId):
+        idx = None
+        for i, iid in enumerate(cls.taskOrder):
+            if iid == taskId:
+                idx = i
+                break
+        if idx is None:     # 没找到
+            return
+        
+        if idx == 0:        # 已经到顶（添加到order的顺序与显示上下是反的）
+            return
+        
+        cls.taskOrder[i], cls.taskOrder[i-1] = cls.taskOrder[i-1], cls.taskOrder[i]
+
 
 def AddTaskList(taskId):
     title, _ = TaskDb.GetTask(taskId)
@@ -45,8 +75,17 @@ def DeleteTaskList(taskId):
     UiItems.taskList.delete(str(taskId))
 
 
+def ClearTaskList():
+    UiItems.taskList.delete(
+        *UiItems.taskList.get_children()
+    )
+
+
 def RefreshTaskList():
-    pass
+    ClearTaskList()
+    iids = TaskDb.GetIidsInOrder()
+    for iid in iids:
+        AddTaskList(iid)
 
 
 def DisplayTask(taskId):
