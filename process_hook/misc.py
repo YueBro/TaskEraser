@@ -3,6 +3,7 @@ from time import sleep
 from logic.logic_func import TaskDb
 from logic.bind_func import BindAttrs
 import threading as thr
+from version_ctrl import ReVersionLocalInfo, g_ver
 
 
 g_localStoragePth = "tasks.db"
@@ -15,10 +16,14 @@ def LoadAndAssign(path):
     try:
         with open(path, "r") as f:
             localInfo = json.load(f)
-            taskDb = {int(k):v for k,v in localInfo["taskDb"].items()}
-            taskOrder = localInfo["taskOrder"]
-            taskIdCount = localInfo["taskIdCount"]
+        localInfo = ReVersionLocalInfo(localInfo)
+        taskDb = {int(k):v for k,v in localInfo["taskDb"].items()}
+        taskDbDeleted = localInfo["taskDbDeleted"]
+        taskOrder = localInfo["taskOrder"]
+        taskIdCount = localInfo["taskIdCount"]
         TaskDb.taskDb = taskDb
+        TaskDb.taskDbDeleted = taskDbDeleted
+        print(taskDbDeleted)
         TaskDb.taskOrder = taskOrder
         BindAttrs.taskIdCount = taskIdCount
     except FileNotFoundError:
@@ -31,12 +36,14 @@ def LoadAndAssign(path):
 
 def Dump(path):
     toDump = {
+        "ver": g_ver,
         "taskDb": TaskDb.taskDb,
+        "taskDbDeleted": TaskDb.taskDbDeleted,
         "taskOrder": TaskDb.taskOrder,
         "taskIdCount": BindAttrs.taskIdCount
     }
     with open(path, "w") as f:
-        json.dump(toDump, f)
+        json.dump(toDump, f, indent=2)
 
 
 def StartPeriodicAutoSave():

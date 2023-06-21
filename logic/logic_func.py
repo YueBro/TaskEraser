@@ -3,6 +3,7 @@ from ui import UiItems
 
 class TaskDb:
     taskDb = dict()     # {id: [title, detail]}
+    taskDbDeleted = []  # [id, title, detail]
     taskOrder = []
 
     @classmethod
@@ -18,8 +19,17 @@ class TaskDb:
     
     @classmethod
     def RemoveTask(cls, taskId):
+        cls.taskDbDeleted.append([taskId, *cls.taskDb[taskId]])
         cls.taskDb.pop(taskId)
         cls.taskOrder.remove(taskId)
+    
+    @classmethod
+    def RecoverTask(cls):
+        if len(cls.taskDbDeleted) == 0:
+            return -1, None, None
+        taskId, title, detail = cls.taskDbDeleted.pop(-1)
+        cls.StoreTask(taskId, title, detail)
+        return taskId, title, detail
     
     @classmethod
     def GetTask(cls, taskId):
