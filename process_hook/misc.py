@@ -23,7 +23,6 @@ def LoadAndAssign(path):
         taskIdCount = localInfo["taskIdCount"]
         TaskDb.taskDb = taskDb
         TaskDb.taskDbDeleted = taskDbDeleted
-        print(taskDbDeleted)
         TaskDb.taskOrder = taskOrder
         BindAttrs.taskIdCount = taskIdCount
     except FileNotFoundError:
