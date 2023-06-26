@@ -3,7 +3,7 @@ from logic.bind_func import *
 
 
 def ProgramInit():
-    LoadAndAssign(g_localStoragePth)
+    Load(g_localStoragePth)
     StartPeriodicAutoSave()
 
 

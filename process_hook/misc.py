@@ -12,18 +12,20 @@ g_autoSaveThr: thr.Thread = None
 g_autoSaveThrEvnt: thr.Event = thr.Event()
 
 
-def LoadAndAssign(path):
+def Load(path):
     try:
         with open(path, "r") as f:
             localInfo = json.load(f)
         localInfo = ReVersionLocalInfo(localInfo)
         taskDb = {int(k):v for k,v in localInfo["taskDb"].items()}
-        taskDbDeleted = localInfo["taskDbDeleted"]
         taskOrder = localInfo["taskOrder"]
+        taskDbDeleted = {int(k):v for k,v in localInfo["taskDbDeleted"].items()}
+        taskOrderDeleted = localInfo["taskOrderDeleted"]
         taskIdCount = localInfo["taskIdCount"]
         TaskDb.taskDb = taskDb
-        TaskDb.taskDbDeleted = taskDbDeleted
         TaskDb.taskOrder = taskOrder
+        TaskDb.taskDbDeleted = taskDbDeleted
+        TaskDb.taskOrderDeleted = taskOrderDeleted
         BindAttrs.taskIdCount = taskIdCount
     except FileNotFoundError:
         print("Warning: local file load fail", "(FileNotFoundError)")
@@ -37,8 +39,9 @@ def Dump(path):
     toDump = {
         "ver": g_ver,
         "taskDb": TaskDb.taskDb,
-        "taskDbDeleted": TaskDb.taskDbDeleted,
         "taskOrder": TaskDb.taskOrder,
+        "taskDbDeleted": TaskDb.taskDbDeleted,
+        "taskOrderDeleted": TaskDb.taskOrderDeleted,
         "taskIdCount": BindAttrs.taskIdCount
     }
     with open(path, "w") as f:
