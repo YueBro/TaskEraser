@@ -11,11 +11,14 @@ class UiItems:
     dnBut: tk.Button = None
     editTitle: tk.Text = None
     editDetail: tk.Text = None
+    binCheckButVal: tk.BooleanVar = None
+    binCheckBut: tk.Checkbutton = None
 
 
 def BuildPanelL(root):
     frame = tk.Frame(root, bg="green")
     frame.place(relx=0, rely=0, relwidth=0.5, relheight=1)
+    BuildTopBubbles(frame)
     BuildTaskList(frame)
     BuildModButs(frame)
 
@@ -27,13 +30,23 @@ def BuildPanelR(root):
     BuildEditDetail(frame)
 
 
+def BuildTopBubbles(root):
+    frame = tk.Frame(root)
+    frame.place(relx=0, rely=0, relheight=0.05, relwidth=1)
+
+    checkBut = tk.Checkbutton(frame, text="Bin")
+    checkBut.pack(side="left")
+
+    UiItems.binCheckBut = checkBut
+
+
 attrs = (
     {"str": "id", "width": 20},
     {"str": "title", "width": 350},
 )
 def BuildTaskList(root):
     frame = tk.Frame(root, bg="red")
-    frame.place(relx=0, rely=0, relheight=0.9, relwidth=1)
+    frame.place(relx=0, rely=0.05, relheight=0.85, relwidth=1)
 
     taskList = ttk.Treeview(
         frame,

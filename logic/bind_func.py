@@ -2,22 +2,22 @@ from .logic_func import *
 
 
 def ClickTaskList(evnt):
-    print("TaskList", evnt)
+    print("ClickTaskList", evnt)
     ShowTaskOnUserSelection()
 
 
-def ClickAddBut(evnt):
-    print("AddBut", evnt)
+def ClickAddBut():
+    print("ClickAddBut")
     CreateNewTaskByUser()
 
 
-def ClickDelBut(evnt):
-    print("ClickDelBut", evnt)
+def ClickDelBut():
+    print("ClickDelBut")
     DeleteSelectedTask()
 
 
-def ClickRecBut(evnt):
-    print("ClickRecBut", evnt)
+def ClickRecBut():
+    print("ClickRecBut")
     RecoverOneDeletedTask()
 
 
@@ -26,14 +26,20 @@ def ModifyTask(evnt):
     print("ModifyTask", evnt)
     UiItems.editTitle.edit_modified(False)      # Set modified flag to False, so can be retriggered,
     UiItems.editDetail.edit_modified(False)     # cuz only trigger once every time editing
-    UpdateTaskDbOnModity()
+    UpdateTaskDbOnModify()
 
 
-def ClickUpBut(evnt):
-    print("ClickUpBut", evnt)
+def ClickUpBut():
+    print("ClickUpBut")
     MoveUpSelectedTask()
 
 
-def ClickDnBut(evnt):
-    print("ClickDnBut", evnt)
+def ClickDnBut():
+    print("ClickDnBut")
     MoveDownSelectedTask()
+
+
+def ClickBinCheckBut(evnt):
+    currState = UiItems.binCheckButVal.get()
+    print("ClickBinCheckBut", evnt, currState)
+    SwitchBinState(not currState)

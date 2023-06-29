@@ -2,9 +2,7 @@ from .sub_logic_func import *
 
 from task_db import TaskDb, TaskDbDel
 
-
-class BindAttrs:
-    taskIdCount = 0
+from misc import _ConfigAttr
 
 
 def ShowTaskOnUserSelection():
@@ -14,12 +12,11 @@ def ShowTaskOnUserSelection():
 
 
 def CreateNewTaskByUser():
-    taskId = BindAttrs.taskIdCount
-    BindAttrs.taskIdCount += 1
+    taskId = Shared.taskIdCount
+    Shared.taskIdCount += 1
 
-    TaskDb.StoreTask(taskId, "New Task", "")
+    Shared.taskDb.StoreTask(taskId, "New Task", "")
     AddTaskList(taskId)
-    DisplayTask(taskId)
     UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
 
@@ -29,10 +26,10 @@ def DeleteSelectedTask():
         return
     DeleteTaskList(iid)
     ClearDisplay()
-    idx, title, detail = TaskDb.RemoveTask(iid)
-    if idx == -1:
-        raise("Check your coding...")
-    TaskDbDel.StoreTask(idx, title, detail)
+    idx, title, detail = Shared.taskDb.RemoveTask(iid)
+    assert idx != -1, "Check your code..."
+    if Shared.taskDb is TaskDb:
+        TaskDbDel.StoreTask(idx, title, detail)
 
 
 def RecoverOneDeletedTask():
@@ -43,15 +40,14 @@ def RecoverOneDeletedTask():
     TaskDb.StoreTask(taskId, title, detail)
 
     AddTaskList(taskId)
-    DisplayTask(taskId)
-    UiItems.taskList.selection_set(taskId)
+    UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
 
-def UpdateTaskDbOnModity():
+def UpdateTaskDbOnModify():
     iid = GetSelectedTaskIid()
     if iid != -1:
         title, detail = GetDisplayingTask()
-        TaskDb.UpdateTask(iid, title, detail)
+        Shared.taskDb.UpdateTask(iid, title, detail)
         UpdateTaskList(iid, title)
 
 
@@ -59,7 +55,7 @@ def MoveUpSelectedTask():
     iid = GetSelectedTaskIid()
     if iid == -1:
         return
-    TaskDb.MoveUp(iid)
+    Shared.taskDb.MoveUp(iid)
     RefreshTaskList()
     UiItems.taskList.selection_set(iid)
 
@@ -68,6 +64,23 @@ def MoveDownSelectedTask():
     iid = GetSelectedTaskIid()
     if iid == -1:
         return
-    TaskDb.MoveDn(iid)
+    Shared.taskDb.MoveDn(iid)
     RefreshTaskList()
     UiItems.taskList.selection_set(iid)
+
+
+def SwitchBinState(toBin):
+    ClearDisplay()
+    if toBin is True:
+        Shared.taskDb=TaskDbDel
+        _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="disabled")
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disabled", foreground="grey")
+        UiItems.delBut.config(text="DEL!!", foreground="red")
+        UiItems.binCheckBut.config(foreground="red")
+    else:
+        Shared.taskDb=TaskDb
+        _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="normal")
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal", foreground="black")
+        UiItems.delBut.config(text="DEL", foreground="black")
+        UiItems.binCheckBut.config(foreground="black")
+    RefreshTaskList()

@@ -1,12 +1,12 @@
-def Upgrade_0_0_0_To_1_2_0(localInfoDict: dict):
-    print("task.db  0.0.0 -> 1.2.0")
+def UpgradeTo_1_2_0(localInfoDict: dict):
+    print("Upgrade local task db -> 1.2.0")
     localInfoDict["ver"] = (1, 2, 0)
     localInfoDict["taskDbDeleted"] = dict()
     localInfoDict["taskOrderDeleted"] = []
-    return localInfoDict, (1, 2, 0)
+    return localInfoDict
 
 
-# ((start_version, function))
+# ((target_version, function))
 g_UpgradeFuns = (
-    ((0,0,0),       Upgrade_0_0_0_To_1_2_0),
+    ((1,2,0),       UpgradeTo_1_2_0),
 )

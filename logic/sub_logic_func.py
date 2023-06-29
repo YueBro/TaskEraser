@@ -1,9 +1,16 @@
 from ui import UiItems
-from task_db import TaskDb
+from task_db import TaskDb, TaskDbDel
+
+from misc import _ConfigAttr
+
+
+class Shared:
+    taskIdCount = 0
+    taskDb = TaskDb
 
 
 def AddTaskList(taskId):
-    title, _ = TaskDb.GetTask(taskId)
+    title, _ = Shared.taskDb.GetTask(taskId)
     UiItems.taskList.insert("", 0, iid=taskId, values=(str(taskId), title))
 
 
@@ -23,19 +30,24 @@ def ClearTaskList():
 
 def RefreshTaskList():
     ClearTaskList()
-    iids = TaskDb.GetIidsInOrder()
+    iids = Shared.taskDb.GetIidsInOrder()
     for iid in iids:
         AddTaskList(iid)
 
 
 def DisplayTask(taskId):
+    if Shared.taskDb is TaskDbDel:
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
     ClearDisplay()
-    title, detail = TaskDb.GetTask(taskId)
+    title, detail = Shared.taskDb.GetTask(taskId)
     UiItems.editTitle.insert(1.0, title)
     UiItems.editDetail.insert(1.0, detail)
+    if Shared.taskDb is TaskDbDel:
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disable")
 
 
 def ClearDisplay():
+    _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
     UiItems.editTitle.delete("1.0", "end")
     UiItems.editDetail.delete("1.0", "end")
 

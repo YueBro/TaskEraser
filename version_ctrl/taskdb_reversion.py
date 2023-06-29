@@ -4,13 +4,11 @@ from .reversion_sub_functions import g_UpgradeFuns
 
 
 def ReVersionLocalInfo(localInfoDict: dict):
-    ver = GetVersion(localInfoDict)
+    for targetVer, func in g_UpgradeFuns:
+        if GetVersion(localInfoDict) < targetVer:
+            localInfoDict = func(localInfoDict)
 
-    for startVer, func in g_UpgradeFuns:
-        if ver == startVer:
-            localInfoDict, ver = func(localInfoDict)
-
-    assert ver == g_ver, "Version error, check your code..."
+    assert GetVersion(localInfoDict) == g_ver, "Version error, check your code..."
     return localInfoDict
 
 
