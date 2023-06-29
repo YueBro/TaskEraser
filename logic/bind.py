@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from ui import UiItems
 
 from .bind_func import *
@@ -5,9 +7,13 @@ from .bind_func import *
 
 def BindUi():
     UiItems.taskList.bind("<<TreeviewSelect>>", ClickTaskList)
-    UiItems.addBut.bind("<Button-1>", ClickAddBut)
+    UiItems.addBut.config(command=ClickAddBut)
+    UiItems.delBut.config(command=ClickDelBut)
+    UiItems.recBut.config(command=ClickRecBut)
     UiItems.editTitle.bind("<<Modified>>", ModifyTask)
     UiItems.editDetail.bind("<<Modified>>", ModifyTask)
-    UiItems.delBut.bind("<Button-1>", ClickDelBut)
-    UiItems.upBut.bind("<Button-1>", ClickUpBut)
-    UiItems.dnBut.bind("<Button-1>", ClickDnBut)
+    UiItems.upBut.config(command=ClickUpBut)
+    UiItems.dnBut.config(command=ClickDnBut)
+    UiItems.binCheckButVal = tk.BooleanVar()
+    UiItems.binCheckBut.config(variable=UiItems.binCheckButVal)
+    UiItems.binCheckBut.bind("<Button-1>", ClickBinCheckBut)
