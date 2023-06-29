@@ -1,115 +1,86 @@
-from ui import UiItems
+from .sub_logic_func import *
+
+from task_db import TaskDb, TaskDbDel
+
+from misc import _ConfigAttr
 
 
-class TaskDb:
-    taskDb = dict()     # {id: [title, detail]}
-    taskOrder = []
-
-    @classmethod
-    def StoreTask(cls, taskId, title, detail):
-        if taskId in cls.taskDb:
-            raise KeyError(f"Id already exist (id={taskId})")
-        cls.taskDb[taskId] = [title, detail]
-        cls.taskOrder.append(taskId)
-
-    @classmethod
-    def UpdateTask(cls, taskId, title, detail):
-        cls.taskDb[taskId] = [title, detail]
-    
-    @classmethod
-    def RemoveTask(cls, taskId):
-        cls.taskDb.pop(taskId)
-        cls.taskOrder.remove(taskId)
-    
-    @classmethod
-    def GetTask(cls, taskId):
-        if taskId in cls.taskDb:
-            return cls.taskDb[taskId]
-        return None
-    
-    @classmethod
-    def GetIidsInOrder(cls):
-        return cls.taskOrder
-
-    @classmethod
-    def MoveUp(cls, taskId):
-        idx = None
-        for i, iid in enumerate(cls.taskOrder):
-            if iid == taskId:
-                idx = i
-                break
-        if idx is None:     # 没找到
-            return
-        
-        if idx == (len(cls.taskOrder) - 1):     # 已经到底（添加到order的顺序与显示上下是反的）
-            return
-        
-        cls.taskOrder[i], cls.taskOrder[i+1] = cls.taskOrder[i+1], cls.taskOrder[i]
-
-    @classmethod
-    def MoveDn(cls, taskId):
-        idx = None
-        for i, iid in enumerate(cls.taskOrder):
-            if iid == taskId:
-                idx = i
-                break
-        if idx is None:     # 没找到
-            return
-        
-        if idx == 0:        # 已经到顶（添加到order的顺序与显示上下是反的）
-            return
-        
-        cls.taskOrder[i], cls.taskOrder[i-1] = cls.taskOrder[i-1], cls.taskOrder[i]
+def ShowTaskOnUserSelection():
+    iid = GetSelectedTaskIid()
+    if iid != -1:
+        DisplayTask(iid)
 
 
-def AddTaskList(taskId):
-    title, _ = TaskDb.GetTask(taskId)
-    UiItems.taskList.insert("", 0, iid=taskId, values=(str(taskId), title))
+def CreateNewTaskByUser():
+    taskId = Shared.taskIdCount
+    Shared.taskIdCount += 1
+
+    Shared.taskDb.StoreTask(taskId, "New Task", "")
+    AddTaskList(taskId)
+    UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
 
-def UpdateTaskList(taskId, title):
-    UiItems.taskList.item(taskId, values=(str(taskId), title))
-    
-
-def DeleteTaskList(taskId):
-    UiItems.taskList.delete(str(taskId))
-
-
-def ClearTaskList():
-    UiItems.taskList.delete(
-        *UiItems.taskList.get_children()
-    )
-
-
-def RefreshTaskList():
-    ClearTaskList()
-    iids = TaskDb.GetIidsInOrder()
-    for iid in iids:
-        AddTaskList(iid)
-
-
-def DisplayTask(taskId):
+def DeleteSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    DeleteTaskList(iid)
     ClearDisplay()
-    title, detail = TaskDb.GetTask(taskId)
-    UiItems.editTitle.insert(1.0, title)
-    UiItems.editDetail.insert(1.0, detail)
+    idx, title, detail = Shared.taskDb.RemoveTask(iid)
+    assert idx != -1, "Check your code..."
+    if Shared.taskDb is TaskDb:
+        TaskDbDel.StoreTask(idx, title, detail)
 
 
-def ClearDisplay():
-    UiItems.editTitle.delete("1.0", "end")
-    UiItems.editDetail.delete("1.0", "end")
+def RecoverOneDeletedTask():
+    taskId, title, detail = TaskDbDel.GetLastTask()
+    if taskId == -1:
+        return
+    TaskDbDel.RemoveTask(taskId)
+    TaskDb.StoreTask(taskId, title, detail)
+
+    AddTaskList(taskId)
+    UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
 
-def GetSelectedTaskIid() -> int:
-    selectIid = UiItems.taskList.selection()
-    if len(selectIid) == 0:
-        selectIid = -1
+def UpdateTaskDbOnModify():
+    iid = GetSelectedTaskIid()
+    if iid != -1:
+        title, detail = GetDisplayingTask()
+        Shared.taskDb.UpdateTask(iid, title, detail)
+        UpdateTaskList(iid, title)
+
+
+def MoveUpSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    Shared.taskDb.MoveUp(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)
+
+
+def MoveDownSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    Shared.taskDb.MoveDn(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)
+
+
+def SwitchBinState(toBin):
+    ClearDisplay()
+    if toBin is True:
+        Shared.taskDb=TaskDbDel
+        _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="disabled")
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disabled", foreground="grey")
+        UiItems.delBut.config(text="DEL!!", foreground="red")
+        UiItems.binCheckBut.config(foreground="red")
     else:
-        selectIid = int(selectIid[0])
-    return selectIid
-
-
-def GetDisplayingTask():
-    title = UiItems.editTitle.get("1.0", "end")[:-1]
-    detail = UiItems.editDetail.get("1.0", "end")[:-1]
-    return title, detail
+        Shared.taskDb=TaskDb
+        _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="normal")
+        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal", foreground="black")
+        UiItems.delBut.config(text="DEL", foreground="black")
+        UiItems.binCheckBut.config(foreground="black")
+    RefreshTaskList()
