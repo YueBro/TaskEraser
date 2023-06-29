@@ -1,55 +1,73 @@
-from ui import UiItems
-from task_db import TaskDb
+from .sub_logic_func import *
+
+from task_db import TaskDb, TaskDbDel
 
 
-def AddTaskList(taskId):
-    title, _ = TaskDb.GetTask(taskId)
-    UiItems.taskList.insert("", 0, iid=taskId, values=(str(taskId), title))
+class BindAttrs:
+    taskIdCount = 0
 
 
-def UpdateTaskList(taskId, title):
-    UiItems.taskList.item(taskId, values=(str(taskId), title))
-    
-
-def DeleteTaskList(taskId):
-    UiItems.taskList.delete(str(taskId))
+def ShowTaskOnUserSelection():
+    iid = GetSelectedTaskIid()
+    if iid != -1:
+        DisplayTask(iid)
 
 
-def ClearTaskList():
-    UiItems.taskList.delete(
-        *UiItems.taskList.get_children()
-    )
+def CreateNewTaskByUser():
+    taskId = BindAttrs.taskIdCount
+    BindAttrs.taskIdCount += 1
+
+    TaskDb.StoreTask(taskId, "New Task", "")
+    AddTaskList(taskId)
+    DisplayTask(taskId)
+    UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
 
-def RefreshTaskList():
-    ClearTaskList()
-    iids = TaskDb.GetIidsInOrder()
-    for iid in iids:
-        AddTaskList(iid)
-
-
-def DisplayTask(taskId):
+def DeleteSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    DeleteTaskList(iid)
     ClearDisplay()
-    title, detail = TaskDb.GetTask(taskId)
-    UiItems.editTitle.insert(1.0, title)
-    UiItems.editDetail.insert(1.0, detail)
+    idx, title, detail = TaskDb.RemoveTask(iid)
+    if idx == -1:
+        raise("Check your coding...")
+    TaskDbDel.StoreTask(idx, title, detail)
 
 
-def ClearDisplay():
-    UiItems.editTitle.delete("1.0", "end")
-    UiItems.editDetail.delete("1.0", "end")
+def RecoverOneDeletedTask():
+    taskId, title, detail = TaskDbDel.GetLastTask()
+    if taskId == -1:
+        return
+    TaskDbDel.RemoveTask(taskId)
+    TaskDb.StoreTask(taskId, title, detail)
+
+    AddTaskList(taskId)
+    DisplayTask(taskId)
+    UiItems.taskList.selection_set(taskId)
 
 
-def GetSelectedTaskIid() -> int:
-    selectIid = UiItems.taskList.selection()
-    if len(selectIid) == 0:
-        selectIid = -1
-    else:
-        selectIid = int(selectIid[0])
-    return selectIid
+def UpdateTaskDbOnModity():
+    iid = GetSelectedTaskIid()
+    if iid != -1:
+        title, detail = GetDisplayingTask()
+        TaskDb.UpdateTask(iid, title, detail)
+        UpdateTaskList(iid, title)
 
 
-def GetDisplayingTask():
-    title = UiItems.editTitle.get("1.0", "end")[:-1]
-    detail = UiItems.editDetail.get("1.0", "end")[:-1]
-    return title, detail
+def MoveUpSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    TaskDb.MoveUp(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)
+
+
+def MoveDownSelectedTask():
+    iid = GetSelectedTaskIid()
+    if iid == -1:
+        return
+    TaskDb.MoveDn(iid)
+    RefreshTaskList()
+    UiItems.taskList.selection_set(iid)

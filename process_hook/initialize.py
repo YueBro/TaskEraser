@@ -1,5 +1,7 @@
-from .misc import *
-from logic.bind_func import *
+from .misc import g_localStoragePth, StartPeriodicAutoSave
+from logic.bind_func import RefreshTaskList
+
+from task_db.load_and_dump import Load
 
 
 def ProgramInit():

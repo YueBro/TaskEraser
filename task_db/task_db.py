@@ -1,8 +1,6 @@
-class TaskDb:
+class _TaskDbBase:
     taskDb = dict()     # {id: [title, detail]}
     taskOrder = []
-    taskDbDeleted = dict()  # {id: [title, detail]}
-    taskOrderDeleted = []
 
     @classmethod
     def StoreTask(cls, taskId, title, detail):
@@ -20,23 +18,11 @@ class TaskDb:
     @classmethod
     def RemoveTask(cls, taskId):
         if taskId not in cls.taskOrder:
-            raise KeyError(f"Id not exist (id={taskId})")
-        if taskId in cls.taskOrderDeleted:
-            raise KeyError(f"Id already exist in deleted tasks (id={taskId})")
-        cls.taskDbDeleted[taskId] = cls.taskDb[taskId]
-        cls.taskOrderDeleted.append(taskId)
-        cls.taskDb.pop(taskId)
-        cls.taskOrder.remove(taskId)
-    
-    @classmethod
-    def RecoverTask(cls):
-        if len(cls.taskDbDeleted) == 0:
             return -1, None, None
-        taskId = cls.taskOrderDeleted.pop(-1)
-        title, detail = cls.taskDbDeleted.pop(taskId)
-        cls.StoreTask(taskId, title, detail)
+        title, detail = cls.taskDb.pop(taskId)
+        cls.taskOrder.remove(taskId)
         return taskId, title, detail
-    
+
     @classmethod
     def GetTask(cls, taskId):
         if taskId in cls.taskDb:
@@ -47,6 +33,8 @@ class TaskDb:
     def GetIidsInOrder(cls):
         return [e for e in cls.taskOrder]
 
+
+class TaskDb(_TaskDbBase):
     @classmethod
     def MoveUp(cls, taskId):
         idx = None
@@ -76,3 +64,13 @@ class TaskDb:
             return
         
         cls.taskOrder[i], cls.taskOrder[i-1] = cls.taskOrder[i-1], cls.taskOrder[i]
+
+
+class TaskDbDel(_TaskDbBase):
+    @classmethod
+    def GetLastTask(cls):
+        if len(cls.taskOrder) == 0:
+            return -1, None, None
+        idx = cls.taskOrder[-1]
+        title, detail = cls.taskDb[idx]
+        return idx, title, detail
