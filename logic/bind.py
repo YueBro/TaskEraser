@@ -16,4 +16,4 @@ def BindUi():
     UiItems.dnBut.config(command=ClickDnBut)
     UiItems.binCheckButVal = tk.BooleanVar()
     UiItems.binCheckBut.config(variable=UiItems.binCheckButVal)
-    UiItems.binCheckBut.bind("<Button-1>", ClickBinCheckBut)
+    UiItems.binCheckBut.bind("<ButtonRelease>", ClickBinCheckBut)
