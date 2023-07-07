@@ -76,11 +76,11 @@ def SwitchBinState(toBin):
         _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="disabled")
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disabled", foreground="grey")
         UiItems.delBut.config(text="DEL!!", foreground="red")
-        UiItems.binCheckBut.config(foreground="red")
+        UiItems.binCheckBut.config(foreground="red", activeforeground="red")
     else:
         Shared.taskDb=TaskDb
         _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="normal")
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal", foreground="black")
         UiItems.delBut.config(text="DEL", foreground="black")
-        UiItems.binCheckBut.config(foreground="black")
+        UiItems.binCheckBut.config(foreground="black", activeforeground="black")
     RefreshTaskList()
