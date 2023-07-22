@@ -1,8 +1,8 @@
 import tkinter as tk
 
 from ui import UiItems
-
 from .bind_func import *
+from widgets.undo_buffer import MakeUndoBuffer
 
 
 def BindUi():
@@ -10,8 +10,10 @@ def BindUi():
     UiItems.addBut.config(command=ClickAddBut)
     UiItems.delBut.config(command=ClickDelBut)
     UiItems.recBut.config(command=ClickRecBut)
-    UiItems.editTitle.bind("<<Modified>>", ModifyTask)
-    UiItems.editDetail.bind("<<Modified>>", ModifyTask)
+    MakeUndoBuffer(UiItems.editTitle)
+    UiItems.editTitle.bind("<<Modified>>", ModifyTaskTitle)
+    MakeUndoBuffer(UiItems.editDetail)
+    UiItems.editDetail.bind("<<Modified>>", ModifyTaskDetail)
     UiItems.upBut.config(command=ClickUpBut)
     UiItems.dnBut.config(command=ClickDnBut)
     UiItems.binCheckButVal = tk.BooleanVar()

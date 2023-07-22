@@ -22,14 +22,21 @@ def ClickRecBut():
 
 
 # Will be triggered twice every modification
-def ModifyTask(evnt):
-    is_modified = UiItems.editTitle.edit_modified() or UiItems.editDetail.edit_modified()
-    if not is_modified:
-        return
-    print("ModifyTask", evnt)
-    UiItems.editTitle.edit_modified(False)      # Set modified flag to False, so can be retriggered, \
-    UiItems.editDetail.edit_modified(False)     # cuz only trigger once every time editing
-    UpdateTaskDbOnModify()
+def ModifyTaskTitle(evnt):
+    is_modified = UiItems.editTitle.edit_modified()
+    if is_modified:
+        print("ModifyTaskTitle", evnt)
+        UiItems.editTitle.edit_modified(False)      # Set modified flag to False, so can be retriggered, cuz only trigger once every time editing
+        UpdateTaskDbOnModify()
+
+
+# Will be triggered twice every modification
+def ModifyTaskDetail(evnt):
+    is_modified = UiItems.editDetail.edit_modified()
+    if is_modified:
+        print("ModifyTaskDetail", evnt)
+        UiItems.editDetail.edit_modified(False)      # Set modified flag to False, so can be retriggered, cuz only trigger once every time editing
+        UpdateTaskDbOnModify()
 
 
 def ClickUpBut():
