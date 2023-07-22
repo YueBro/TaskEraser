@@ -21,10 +21,13 @@ def ClickRecBut():
     RecoverOneDeletedTask()
 
 
-# Will be triggered twice every modification, but leave it for now...
+# Will be triggered twice every modification
 def ModifyTask(evnt):
+    is_modified = UiItems.editTitle.edit_modified() or UiItems.editDetail.edit_modified()
+    if not is_modified:
+        return
     print("ModifyTask", evnt)
-    UiItems.editTitle.edit_modified(False)      # Set modified flag to False, so can be retriggered,
+    UiItems.editTitle.edit_modified(False)      # Set modified flag to False, so can be retriggered, \
     UiItems.editDetail.edit_modified(False)     # cuz only trigger once every time editing
     UpdateTaskDbOnModify()
 
