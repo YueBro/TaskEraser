@@ -3,20 +3,20 @@ from widgets.undo_buffer import UndoBuffer
 
 
 class MyText(tk.Text):
-    undo_buffer = UndoBuffer()
-    undo_bind_funs = {}
-    bind_funs = {}
-
     def __init__(self, master=None, cnf={}, **kw):
         super().__init__(master, cnf, **kw)
+
+        self.undo_buffer = UndoBuffer()
+        self.undo_bind_funs = {}
+        self.bind_funs = {}
+
         self.init_undo_buff_by_curr_state()
-        
         self.undo_bind_funs = {
             "<<Modified>>": [self.do],
             "<Control-z>": [self.undo],
             "<Control-y>": [self.redo],
         }
-        super().bind("<<Modified>>", self.modified_trigger)
+        super().bind("<<Modified>>", self.modified_trigger)     # "modified" is processed differently
         super().bind("<Control-z>", lambda evnt: self.run_bind_funs("<Control-z>", evnt))
         super().bind("<Control-y>", lambda evnt: self.run_bind_funs("<Control-y>", evnt))
         
@@ -36,15 +36,19 @@ class MyText(tk.Text):
             )
     
     def run_bind_funs(self, seq, evnt):
-        funs = self.undo_bind_funs.get(seq, []) + self.bind_funs.get(seq, [])
-        for f in funs:
+        if self.skip_modify_by_undo_redo is True:
+            self.skip_modify_by_undo_redo = False
+        else:
+            for f in self.undo_bind_funs.get(seq, []):
+                f(evnt)
+
+        for f in self.bind_funs.get(seq, []):
             f(evnt)
-    
+
     def modified_trigger(self, evnt):
         is_modified = self.edit_modified()
-        if is_modified and not self.skip_modify_by_undo_redo:
+        if is_modified:
             self.run_bind_funs("<<Modified>>", evnt)
-        self.skip_modify_by_undo_redo = False
         self.edit_modified(False)
     
     def get_cursor_idx(self):
@@ -77,30 +81,28 @@ class MyText(tk.Text):
             self.init_undo_buff_by_curr_state()
         
     def init_undo_buff_by_curr_state(self):
-        self.undo_buffer.Initialize(
+        self.undo_buffer.initialize(
             (self.get_cursor_position(), self.get_text())
         )
     
     def do(self, *w, **kw):
         cursor = self.get_cursor_position()
         txt = self.get_text()
-        self.undo_buffer.AppendChange(
+        self.undo_buffer.append_change(
             (cursor, txt)
         )
 
     def undo(self, *w, **kw):
-        undo_info = self.undo_buffer.Undo()
+        undo_info = self.undo_buffer.undo()
         if undo_info is not None:
-            print(undo_info.__repr__())
             cursor, last_txt = undo_info
             self.set_text(last_txt, clear_undo_buff=False)
             self.set_cursor_position(cursor)
         self.skip_modify_by_undo_redo = True
     
     def redo(self, *w, **kw):
-        redo_info = self.undo_buffer.Redo()
+        redo_info = self.undo_buffer.redo()
         if redo_info is not None:
-            print(redo_info.__repr__())
             cursor, prev_txt = redo_info
             self.set_text(prev_txt, clear_undo_buff=False)
             self.set_cursor_position(cursor)

@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from widgets.mytext import MyText
+
 
 class UiItems:
     taskList: ttk.Treeview = None
@@ -9,8 +11,8 @@ class UiItems:
     recBut: tk.Button = None
     upBut: tk.Button = None
     dnBut: tk.Button = None
-    editTitle: tk.Text = None
-    editDetail: tk.Text = None
+    editTitle: MyText = None
+    editDetail: MyText = None
     binCheckButVal: tk.BooleanVar = None
     binCheckBut: tk.Checkbutton = None
 
@@ -90,7 +92,7 @@ def BuildEditTitle(root):
     label = tk.Label(frame, anchor="w", text="Title")
     label.place(relx=0, rely=0, relheight=0.3, relwidth=1)
 
-    editTitle = tk.Text(frame)
+    editTitle = MyText(frame)
     editTitle.place(relx=0, rely=0.3, relheight=0.7, relwidth=1)
     UiItems.editTitle = editTitle
 
@@ -101,6 +103,6 @@ def BuildEditDetail(root):
     label = tk.Label(frame, anchor="w", text="Detail")
     label.place(relx=0, rely=0, relheight=0.05, relwidth=1)
 
-    editDetail = tk.Text(frame)
+    editDetail = MyText(frame)
     editDetail.place(relx=0, rely=0.05, relheight=0.95, relwidth=1)
     UiItems.editDetail = editDetail

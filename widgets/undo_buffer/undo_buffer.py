@@ -6,25 +6,25 @@ class UndoBuffer:
         self.undoMaxNum = undoMaxNum
         self.stateBuffer = None
         self.idx = None
-        self.Initialize(currState)
+        self.initialize(currState)
 
-    def AppendChange(self, changeInfo):
+    def append_change(self, changeInfo):
         self.stateBuffer = self.stateBuffer[:self.idx+1] + [changeInfo] # new change
         self.stateBuffer = self.stateBuffer[-self.undoMaxNum:]          # truncate size
         self.idx = len(self.stateBuffer) - 1
     
-    def Undo(self):
+    def undo(self):
         if self.idx >= 1:
             self.idx -= 1
-            return self.stateBuffer[self.idx]
+            return dpcp(self.stateBuffer[self.idx])
         return None
 
-    def Redo(self):
+    def redo(self):
         if self.idx < len(self.stateBuffer)-1:
             self.idx += 1
-            return self.stateBuffer[self.idx]
+            return dpcp(self.stateBuffer[self.idx])
         return None
 
-    def Initialize(self, state):
+    def initialize(self, state):
         self.stateBuffer = [state]
         self.idx = 0
