@@ -2,28 +2,29 @@ from copy import deepcopy as dpcp
 
 
 class UndoBuffer:
-    def __init__(self, undoMaxNum=40):
+    def __init__(self, currState=None, undoMaxNum=40):
         self.undoMaxNum = undoMaxNum
-        self.undoBuffer = []
-        self.redoBuffer = []
+        self.stateBuffer = None
+        self.idx = None
+        self.Initialize(currState)
 
-    def NewChange(self, changeInfo):
-        if len(self.undoBuffer) >= self.undoMaxNum:
-            self.undoBuffer.pop(0)
-        self.undoBuffer.append(changeInfo)
-        if len(self.redoBuffer) != 0:
-            self.redoBuffer = []
+    def AppendChange(self, changeInfo):
+        self.stateBuffer = self.stateBuffer[:self.idx+1] + [changeInfo] # new change
+        self.stateBuffer = self.stateBuffer[-self.undoMaxNum:]          # truncate size
+        self.idx = len(self.stateBuffer) - 1
     
     def Undo(self):
-        return self._MoveEvntBtwnBuffersAndRetEvnt(self.undoBuffer, self.redoBuffer)
+        if self.idx >= 1:
+            self.idx -= 1
+            return self.stateBuffer[self.idx]
+        return None
 
     def Redo(self):
-        return self._MoveEvntBtwnBuffersAndRetEvnt(self.redoBuffer, self.undoBuffer)
-    
-    @staticmethod
-    def _MoveEvntBtwnBuffersAndRetEvnt(fromBuffer: list, toBuffer: list):
-        if len(fromBuffer) == 0:
-            return None
-        changeInfo = fromBuffer.pop(-1)
-        toBuffer.append(changeInfo)
-        return dpcp(changeInfo)
+        if self.idx < len(self.stateBuffer)-1:
+            self.idx += 1
+            return self.stateBuffer[self.idx]
+        return None
+
+    def Initialize(self, state):
+        self.stateBuffer = [state]
+        self.idx = 0
