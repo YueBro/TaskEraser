@@ -1,12 +1,12 @@
 from ui import UiItems
-from task_db import TaskDb, TaskDbDel
+from task_db import g_taskDb, g_taskDbDel
 
 from misc import _ConfigAttr
 
 
 class Shared:
     taskIdCount = 0
-    taskDb = TaskDb
+    taskDb = g_taskDb
 
 
 def AddTaskList(taskId):
@@ -36,13 +36,13 @@ def RefreshTaskList():
 
 
 def DisplayTask(taskId):
-    if Shared.taskDb is TaskDbDel:
+    if Shared.taskDb is g_taskDbDel:
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
     ClearDisplay()
     title, detail = Shared.taskDb.GetTask(taskId)
     UiItems.editTitle.set_text(title)
     UiItems.editDetail.set_text(detail)
-    if Shared.taskDb is TaskDbDel:
+    if Shared.taskDb is g_taskDbDel:
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disable")
 
 

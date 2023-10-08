@@ -1,47 +1,51 @@
 from .logic_func import *
+from logic.action_notifier import *
 
 
-def ClickTaskList(evnt):
+def OnTaskSelect(evnt):
     print("ClickTaskList", evnt)
-    ShowTaskOnUserSelection()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_TREEVIEW_SELECT))
 
 
-def ClickAddBut():
+def OnClickAddBut():
     print("ClickAddBut")
-    CreateNewTaskByUser()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_CLICK_ADD_BUT))
 
 
-def ClickDelBut():
+def OnClickDelBut():
     print("ClickDelBut")
-    DeleteSelectedTask()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_CLICK_DEL_BUT))
 
 
-def ClickRecBut():
+def OnClickRecBut():
     print("ClickRecBut")
-    RecoverOneDeletedTask()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_CLICK_REC_BUT))
 
 
-def ModifyTaskTitle(evnt):
+def OnModifyTaskTitle(evnt):
     print("ModifyTaskTitle", evnt)
-    UpdateTaskDbOnModify()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_EDIT_TITLE))
 
 
-def ModifyTaskDetail(evnt):
+def OnModifyTaskDetail(evnt):
     print("ModifyTaskDetail", evnt)
-    UpdateTaskDbOnModify()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_EDIT_DETAIL))
 
 
-def ClickUpBut():
+def OnClickUpBut():
     print("ClickUpBut")
-    MoveUpSelectedTask()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_CLICK_UP_BUT))
 
 
-def ClickDnBut():
+def OnClickDnBut():
     print("ClickDnBut")
-    MoveDownSelectedTask()
+    ActPublisher.Publish(ActEvnt(ACT_EVNT_CLICK_DN_BUT))
 
 
-def ClickBinCheckBut(evnt):
-    currState = UiItems.binCheckButVal.get()
-    print("ClickBinCheckBut", evnt, currState)
-    SwitchBinState(not currState)
+def OnClickBinCheckBut(evnt):
+    isSwitchToBin = UiItems.binCheckButVal.get() == False
+    print("ClickBinCheckBut", evnt, isSwitchToBin)
+    if (isSwitchToBin):
+        ActPublisher.Publish(ActEvnt(ACT_EVNT_SWITCH_TO_BIN))
+    else:
+        ActPublisher.Publish(ActEvnt(ACT_EVNT_SWITCH_BACK_FROM_BIN))

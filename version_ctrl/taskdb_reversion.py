@@ -1,10 +1,10 @@
 from .misc import g_ver
 
-from .reversion_sub_functions import g_UpgradeFuns
+from .reversion_sub_functions import g_upgradeFuns
 
 
 def ReVersionLocalInfo(localInfoDict: dict):
-    for targetVer, func in g_UpgradeFuns:
+    for targetVer, func in g_upgradeFuns:
         if GetVersion(localInfoDict) < targetVer:
             fromVer = tuple(localInfoDict['ver'])
             localInfoDict = func(localInfoDict)

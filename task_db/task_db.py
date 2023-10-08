@@ -1,59 +1,58 @@
-class _TaskDbBase:
-    taskDb = dict()     # {id: [title, detail]}
+class _TaskDbBase():
+    taskDb = {}     # {id: [title, detail]}
     taskOrder = []
 
-    @classmethod
-    def StoreTask(cls, taskId, title, detail):
-        if taskId in cls.taskOrder:
-            raise KeyError(f"Id already exist (id={taskId})")
-        cls.taskDb[taskId] = [title, detail]
-        cls.taskOrder.append(taskId)
+    def __init__(self) -> None:
+        self.taskDb = {}
+        self.taskOrder = []
 
-    @classmethod
-    def UpdateTask(cls, taskId, title, detail):
-        if taskId not in cls.taskOrder:
+    def ResetDataBase(self):
+        self.taskDb = {}     # {id: [title, detail]}
+        self.taskOrder = []
+
+    def StoreTask(self, taskId, title, detail):
+        if taskId in self.taskOrder:
+            raise KeyError(f"Id already exist (id={taskId})")
+        self.taskDb[taskId] = [title, detail]
+        self.taskOrder.append(taskId)
+
+    def UpdateTask(self, taskId, title, detail):
+        if taskId not in self.taskOrder:
             raise KeyError(f"Id not exist (id={taskId})")
-        cls.taskDb[taskId] = [title, detail]
+        self.taskDb[taskId] = [title, detail]
     
-    @classmethod
-    def RemoveTask(cls, taskId):
-        if taskId not in cls.taskOrder:
+    def RemoveTask(self, taskId):
+        if taskId not in self.taskOrder:
             return -1, None, None
-        title, detail = cls.taskDb.pop(taskId)
-        cls.taskOrder.remove(taskId)
+        title, detail = self.taskDb.pop(taskId)
+        self.taskOrder.remove(taskId)
         return taskId, title, detail
 
-    @classmethod
-    def GetTask(cls, taskId):
-        if taskId in cls.taskDb:
-            return cls.taskDb[taskId]
+    def GetTask(self, taskId):
+        if taskId in self.taskDb:
+            return self.taskDb[taskId]
         return None
     
-    @classmethod
-    def GetIidsInOrder(cls):
-        return [e for e in cls.taskOrder]
+    def GetIidsInOrder(self):
+        return [e for e in self.taskOrder]
 
-
-class TaskDb(_TaskDbBase):
-    @classmethod
-    def MoveUp(cls, taskId):
+    def MoveUp(self, taskId):
         idx = None
-        for i, iid in enumerate(cls.taskOrder):
+        for i, iid in enumerate(self.taskOrder):
             if iid == taskId:
                 idx = i
                 break
         if idx is None:     # 没找到
             return
         
-        if idx == (len(cls.taskOrder) - 1):     # 已经到底（添加到order的顺序与显示上下是反的）
+        if idx == (len(self.taskOrder) - 1):     # 已经到底（添加到order的顺序与显示上下是反的）
             return
         
-        cls.taskOrder[i], cls.taskOrder[i+1] = cls.taskOrder[i+1], cls.taskOrder[i]
+        self.taskOrder[i], self.taskOrder[i+1] = self.taskOrder[i+1], self.taskOrder[i]
 
-    @classmethod
-    def MoveDn(cls, taskId):
+    def MoveDn(self, taskId):
         idx = None
-        for i, iid in enumerate(cls.taskOrder):
+        for i, iid in enumerate(self.taskOrder):
             if iid == taskId:
                 idx = i
                 break
@@ -63,14 +62,15 @@ class TaskDb(_TaskDbBase):
         if idx == 0:        # 已经到顶（添加到order的顺序与显示上下是反的）
             return
         
-        cls.taskOrder[i], cls.taskOrder[i-1] = cls.taskOrder[i-1], cls.taskOrder[i]
+        self.taskOrder[i], self.taskOrder[i-1] = self.taskOrder[i-1], self.taskOrder[i]
 
-
-class TaskDbDel(_TaskDbBase):
-    @classmethod
-    def GetLastTask(cls):
-        if len(cls.taskOrder) == 0:
+    def GetLastTask(self):
+        if len(self.taskOrder) == 0:
             return -1, None, None
-        idx = cls.taskOrder[-1]
-        title, detail = cls.taskDb[idx]
+        idx = self.taskOrder[-1]
+        title, detail = self.taskDb[idx]
         return idx, title, detail
+
+
+g_taskDb = _TaskDbBase()
+g_taskDbDel = _TaskDbBase()
