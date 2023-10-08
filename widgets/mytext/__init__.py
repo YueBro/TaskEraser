@@ -1,0 +1,1 @@
+from .mytext import MyText
