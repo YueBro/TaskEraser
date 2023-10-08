@@ -13,4 +13,5 @@ def BuildUi():
 def BuildWindow():
     window = tk.Tk()
     window.geometry("900x700")
+    window.attributes('-topmost', True)
     return window
