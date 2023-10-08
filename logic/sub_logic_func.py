@@ -40,16 +40,16 @@ def DisplayTask(taskId):
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
     ClearDisplay()
     title, detail = Shared.taskDb.GetTask(taskId)
-    UiItems.editTitle.insert(1.0, title)
-    UiItems.editDetail.insert(1.0, detail)
+    UiItems.editTitle.set_text(title)
+    UiItems.editDetail.set_text(detail)
     if Shared.taskDb is TaskDbDel:
         _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disable")
 
 
 def ClearDisplay():
     _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
-    UiItems.editTitle.delete("1.0", "end")
-    UiItems.editDetail.delete("1.0", "end")
+    UiItems.editTitle.set_text("")
+    UiItems.editDetail.set_text("")
 
 
 def GetSelectedTaskIid() -> int:
@@ -62,6 +62,6 @@ def GetSelectedTaskIid() -> int:
 
 
 def GetDisplayingTask():
-    title = UiItems.editTitle.get("1.0", "end")[:-1]
-    detail = UiItems.editDetail.get("1.0", "end")[:-1]
+    title = UiItems.editTitle.get_text()
+    detail = UiItems.editDetail.get_text()
     return title, detail

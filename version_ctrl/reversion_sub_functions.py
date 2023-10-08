@@ -16,5 +16,5 @@ def SimpleUpgradeToLatest(localInfoDict: dict, latestVer = g_ver):
 # ((target_version, function))
 g_UpgradeFuns = (
     ((1,2,0),       UpgradeTo_1_2_0),
-    ((1,2,1),       SimpleUpgradeToLatest),
+    ((1,2,2),       SimpleUpgradeToLatest),
 )
