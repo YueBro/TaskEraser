@@ -2,13 +2,15 @@ from .act_consts import *
 from .act_event import ActEvnt
 from .act_subscriber import ActSubscriber
 
-from typing import Union, List
+from typing import Union, Any, List, Dict
+
+from inspect import isfunction
 
 
 class _PseudoActSubscriber(ActSubscriber):
-    def __init__(self, fun: function) -> None:
+    def __init__(self, fun) -> None:
         super().__init__()
-        assert isinstance(fun, function)
+        assert isfunction(fun)
         self.fun = fun
 
     def OnEvnt(self, evnt: ActEvnt):
@@ -16,15 +18,27 @@ class _PseudoActSubscriber(ActSubscriber):
 
 
 class ActPublisher:
-    lastAction = ACT_STATE_INIT
-    subscribers: List[ActSubscriber] = []
+    lastAction = ACT_EVNT_INIT
+    toEvntOnlySubscribers: Dict[int, List[ActSubscriber]] = {}
+    AnySubscribers: List[ActSubscriber] = []
 
     @classmethod
-    def Register(cls, subscriber: Union[function, ActSubscriber]):
+    def RegisterTheToEvntOnly(cls, evnt, subscriber: Union[Any, ActSubscriber]):
         if isinstance(subscriber, ActSubscriber):
-            ActSubscriber.append(subscriber)
-        elif isinstance(subscriber, function):
-            ActSubscriber.append(_PseudoActSubscriber(subscriber))
+            s = subscriber
+        elif isfunction(subscriber):
+            s = _PseudoActSubscriber(subscriber)
+        else:
+            raise Exception("Invalid subscriber type")
+        cls.toEvntOnlySubscribers[evnt] = cls.toEvntOnlySubscribers.get(evnt, []) + [s]
+
+    @classmethod
+    def RegisterAnyEvnt(cls, subscriber: Union[Any, ActSubscriber]):
+        print(subscriber, type(subscriber))
+        if isinstance(subscriber, ActSubscriber):
+            cls.AnySubscribers.append(subscriber)
+        elif isfunction(subscriber):
+            cls.AnySubscribers.append(_PseudoActSubscriber(subscriber))
         else:
             raise Exception("Invalid subscriber type")
 
@@ -33,5 +47,7 @@ class ActPublisher:
         assert isinstance(evntContent, ActEvnt)
         evntContent.fromAction = cls.lastAction
         cls.lastAction = evntContent.toAction
-        for subscriber in cls.subscribers:
+        for subscriber in cls.toEvntOnlySubscribers.get(evntContent.toAction, []):
+            subscriber.OnEvnt(evntContent)
+        for subscriber in cls.AnySubscribers:
             subscriber.OnEvnt(evntContent)
