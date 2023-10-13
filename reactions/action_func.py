@@ -1,5 +1,6 @@
 from .logic_func import *
-from logic.action_notifier import *
+from reactions.action_notifier import *
+from misc.shared.glob_vals import GlobVals
 
 
 def OnTaskSelect(evnt):
@@ -43,7 +44,7 @@ def OnClickDnBut():
 
 
 def OnClickBinCheckBut(evnt):
-    isSwitchToBin = UiItems.binCheckButVal.get() == False
+    isSwitchToBin = GlobVals.binCheckBoxVal.get() == False
     print("ClickBinCheckBut", evnt, isSwitchToBin)
     if (isSwitchToBin):
         ActPublisher.Publish(ActEvnt(ACT_EVNT_SWITCH_TO_BIN))

@@ -20,7 +20,7 @@ class MyText(tk.Text):
         super().bind("<Control-z>", lambda evnt: self.run_bind_funs("<Control-z>", evnt))
         super().bind("<Control-y>", lambda evnt: self.run_bind_funs("<Control-y>", evnt))
         
-        self.skip_modify_by_undo_redo = False    # avoid undo redo triggers self.modified_trigger()
+        self.skip_next_text_modify = False      # avoid undo/redo/set_ext() triggers self.modified_trigger()
 
     def bind(self, sequence=None, func=None, add=False):
         if add is True:
@@ -36,14 +36,14 @@ class MyText(tk.Text):
             )
     
     def run_bind_funs(self, seq, evnt):
-        if self.skip_modify_by_undo_redo is True:
-            self.skip_modify_by_undo_redo = False
+        if self.skip_next_text_modify is True:
+            self.skip_next_text_modify = False
         else:
             for f in self.undo_bind_funs.get(seq, []):
                 f(evnt)
 
-        for f in self.bind_funs.get(seq, []):
-            f(evnt)
+            for f in self.bind_funs.get(seq, []):
+                f(evnt)
 
     def modified_trigger(self, evnt):
         is_modified = self.edit_modified()
@@ -79,6 +79,7 @@ class MyText(tk.Text):
         self.insert(1.0, string)
         if clear_undo_buff is True:
             self.init_undo_buff_by_curr_state()
+        self.skip_next_text_modify = True
         
     def init_undo_buff_by_curr_state(self):
         self.undo_buffer.initialize(
@@ -98,7 +99,7 @@ class MyText(tk.Text):
             cursor, last_txt = undo_info
             self.set_text(last_txt, clear_undo_buff=False)
             self.set_cursor_position(cursor)
-        self.skip_modify_by_undo_redo = True
+        self.skip_next_text_modify = True
     
     def redo(self, *w, **kw):
         redo_info = self.undo_buffer.redo()
@@ -106,4 +107,4 @@ class MyText(tk.Text):
             cursor, prev_txt = redo_info
             self.set_text(prev_txt, clear_undo_buff=False)
             self.set_cursor_position(cursor)
-        self.skip_modify_by_undo_redo = True
+        self.skip_next_text_modify = True

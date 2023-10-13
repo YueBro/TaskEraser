@@ -1,16 +1,11 @@
-from ui import UiItems
-from task_db import g_taskDb, g_taskDbDel
+from misc.shared import UiItems
+from misc.shared.glob_dbs import *
 
 from misc import _ConfigAttr
 
 
-class Shared:
-    taskIdCount = 0
-    taskDb = g_taskDb
-
-
 def AddTaskList(taskId):
-    title, _ = Shared.taskDb.GetTask(taskId)
+    title, _ = GlobDbs.currDb.GetTask(taskId)
     UiItems.taskList.insert("", 0, iid=taskId, values=(str(taskId), title))
 
 
@@ -30,26 +25,26 @@ def ClearTaskList():
 
 def RefreshTaskList():
     ClearTaskList()
-    iids = Shared.taskDb.GetIidsInOrder()
+    iids = GlobDbs.currDb.GetIidsInOrder()
     for iid in iids:
         AddTaskList(iid)
 
 
 def DisplayTask(taskId):
-    if Shared.taskDb is g_taskDbDel:
-        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
+    if GlobDbs.currDb is GlobDbs.taskDbDel:
+        _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal")
     ClearDisplay()
-    title, detail = Shared.taskDb.GetTask(taskId)
-    UiItems.editTitle.set_text(title)
-    UiItems.editDetail.set_text(detail)
-    if Shared.taskDb is g_taskDbDel:
-        _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disable")
+    title, detail = GlobDbs.currDb.GetTask(taskId)
+    UiItems.titleEditor.set_text(title)
+    UiItems.detailEditor.set_text(detail)
+    if GlobDbs.currDb is GlobDbs.taskDbDel:
+        _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disable")
 
 
 def ClearDisplay():
-    _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal")
-    UiItems.editTitle.set_text("")
-    UiItems.editDetail.set_text("")
+    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal")
+    UiItems.titleEditor.set_text("")
+    UiItems.detailEditor.set_text("")
 
 
 def GetSelectedTaskIid() -> int:
@@ -62,6 +57,6 @@ def GetSelectedTaskIid() -> int:
 
 
 def GetDisplayingTask():
-    title = UiItems.editTitle.get_text()
-    detail = UiItems.editDetail.get_text()
+    title = UiItems.titleEditor.get_text()
+    detail = UiItems.detailEditor.get_text()
     return title, detail

@@ -2,6 +2,7 @@ from time import sleep
 import threading as thr
 
 from task_db.load_and_dump import Dump
+from misc.shared.glob_dbs import *
 
 
 g_localStoragePth = "tasks.db"

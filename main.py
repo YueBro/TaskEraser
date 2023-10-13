@@ -2,17 +2,15 @@ import tkinter as tk
 
 from process_hook import ProgramInit, Finish, UiInit
 from ui import BuildUi
-from logic import BindUi
 
-# import ctypes                                   # No more blurriness! (but with bugs...)
-# ctypes.windll.shcore.SetProcessDpiAwareness(1)  # No more blurriness! (but with bugs...)
+# import ctypes                                   # No more blurriness! (sry Windows...)
+# ctypes.windll.shcore.SetProcessDpiAwareness(1)  # No more blurriness! (sry Windows...)
 
 
 def main():
     ProgramInit()
 
     BuildUi()
-    BindUi()
     UiInit()
     tk.mainloop()
 
