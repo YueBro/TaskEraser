@@ -1,9 +1,8 @@
 import os
 import shutil
 import json
-from misc.shared import GlobVals
+from misc.shared import GlobVals, GlobDbs
 from version_ctrl import ReVersionLocalInfo, g_ver
-from misc.shared.glob_dbs import *
 
 
 def _GetFileDirAndNameAndSuffix(pth):

@@ -1,7 +1,26 @@
-from misc.shared import UiItems
-from misc.shared.glob_dbs import *
+from functools import wraps
+from misc.shared import UiItems, GlobDbs
 
 from misc import _ConfigAttr
+
+
+def EnableEditor():
+    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal", foreground="black", background="white")
+
+
+def DisableEditor():
+    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disabled", foreground="grey", background="#eeeeee")
+
+
+def _KeepEditorStateDeco(fun):
+    @wraps(fun)
+    def _fun(*args, **kwargs):
+        EnableEditor()
+        ret = fun(*args, **kwargs)
+        if GlobDbs.currDb is GlobDbs.taskDbDel:
+            DisableEditor()
+        return ret
+    return _fun
 
 
 def AddTaskList(taskId):
@@ -30,19 +49,15 @@ def RefreshTaskList():
         AddTaskList(iid)
 
 
+@_KeepEditorStateDeco
 def DisplayTask(taskId):
-    if GlobDbs.currDb is GlobDbs.taskDbDel:
-        _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal")
-    ClearDisplay()
     title, detail = GlobDbs.currDb.GetTask(taskId)
     UiItems.titleEditor.set_text(title)
     UiItems.detailEditor.set_text(detail)
-    if GlobDbs.currDb is GlobDbs.taskDbDel:
-        _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disable")
 
 
+@_KeepEditorStateDeco
 def ClearDisplay():
-    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal")
     UiItems.titleEditor.set_text("")
     UiItems.detailEditor.set_text("")
 

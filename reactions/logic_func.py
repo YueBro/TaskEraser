@@ -2,16 +2,24 @@ from .sub_logic_func import *
 from reactions.action_notifier import *
 
 from misc import _ConfigAttr
-from misc.shared import UiItems, GlobVals
-from misc.shared.glob_dbs import *
+from misc.shared import UiItems, GlobVals, GlobDbs
 
 
 def ShowTaskOnUserSelection(evnt: ActEvnt):
     iid = GetSelectedTaskIid()
     if iid != -1:
+        if GlobDbs.currDb is GlobDbs.taskDb:
+            _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal", foreground="black", background="white")
         DisplayTask(iid)
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_TREEVIEW_SELECT, ShowTaskOnUserSelection)
+
+
+def EditorDisabling(evnt: ActEvnt):
+    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disabled", foreground="grey", background="#eeeeee")
+
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT,   EditorDisabling)
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_START_MAIN_LOOP, EditorDisabling)
 
 
 def CreateNewTaskByUser(evnt: ActEvnt):
@@ -89,7 +97,7 @@ def SwitchToBin(evnt: ActEvnt):
     ClearDisplay()
     GlobDbs.currDb = GlobDbs.taskDbDel
     _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="disabled")
-    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disabled", foreground="grey")
+    DisableEditor()
     UiItems.delBut.config(text="DEL!!", foreground="red")
     UiItems.binCheckBox.config(foreground="red", activeforeground="red")
     RefreshTaskList()
@@ -101,7 +109,7 @@ def SwitchBackFromBin(evnt: ActEvnt):
     ClearDisplay()
     GlobDbs.currDb = GlobDbs.taskDb
     _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="normal")
-    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal", foreground="black")
+    # EnableEditor()
     UiItems.delBut.config(text="DEL", foreground="black")
     UiItems.binCheckBox.config(foreground="black", activeforeground="black")
     RefreshTaskList()

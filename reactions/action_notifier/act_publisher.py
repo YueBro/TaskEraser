@@ -8,13 +8,18 @@ from inspect import isfunction
 
 
 class _PseudoActSubscriber(ActSubscriber):
-    def __init__(self, fun) -> None:
+    def __init__(self, fun, fun_end=None) -> None:
         super().__init__()
         assert isfunction(fun)
         self.fun = fun
+        self.fun_end = fun_end
 
     def OnEvnt(self, evnt: ActEvnt):
         self.fun(evnt)
+    
+    def OnEvntEnd(self, evnt: ActEvnt):
+        if self.fun_end is not None:
+            self.fun_end(evnt)
 
 
 class ActPublisher:
@@ -47,6 +52,12 @@ class ActPublisher:
         assert isinstance(evntContent, ActEvnt)
         evntContent.fromAction = cls.lastAction
         cls.lastAction = evntContent.toAction
+        
+        for subscriber in cls.toEvntOnlySubscribers.get(evntContent.fromAction, []):
+            subscriber.OnEvntEnd(evntContent)
+        for subscriber in cls.AnySubscribers:
+            subscriber.OnEvntEnd(evntContent)
+
         for subscriber in cls.toEvntOnlySubscribers.get(evntContent.toAction, []):
             subscriber.OnEvnt(evntContent)
         for subscriber in cls.AnySubscribers:
