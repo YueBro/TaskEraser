@@ -4,5 +4,8 @@ from .act_event import ActEvnt
 
 class ActSubscriber(metaclass=ABCMeta):
     @abstractmethod
-    def OnEvnt(self, evnt: ActEvnt, *args, **kwargs):
+    def OnEvnt(self, evnt: ActEvnt):
         raise NotImplemented("Need implementation")
+
+    def OnEvntEnd(self, evnt: ActEvnt):
+        pass

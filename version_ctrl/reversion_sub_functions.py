@@ -12,14 +12,9 @@ def SimpleUpgradeToLatest(localInfoDict: dict, latestVer = g_ver):
     localInfoDict["ver"] = latestVer
     return localInfoDict
 
-# Warning! This function can be used by Admin only!
-def SimpleUpgradeToLatest(localInfoDict: dict, latestVer = g_ver):
-    localInfoDict["ver"] = latestVer
-    return localInfoDict
-
 
 # ((target_version, function))
 g_upgradeFuns = (
     ((1,2,0),       UpgradeTo_1_2_0),
-    ((1,2,3),       SimpleUpgradeToLatest),
+    ((1,2,4),       SimpleUpgradeToLatest),
 )

@@ -1,24 +1,32 @@
 from .sub_logic_func import *
-from logic.action_notifier import *
-
-from task_db import g_taskDb, g_taskDbDel
+from reactions.action_notifier import *
 
 from misc import _ConfigAttr
+from misc.shared import UiItems, GlobVals, GlobDbs
 
 
 def ShowTaskOnUserSelection(evnt: ActEvnt):
     iid = GetSelectedTaskIid()
     if iid != -1:
+        if GlobDbs.currDb is GlobDbs.taskDb:
+            _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="normal", foreground="black", background="white")
         DisplayTask(iid)
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_TREEVIEW_SELECT, ShowTaskOnUserSelection)
 
 
-def CreateNewTaskByUser(evnt: ActEvnt):
-    taskId = Shared.taskIdCount
-    Shared.taskIdCount += 1
+def EditorDisabling(evnt: ActEvnt):
+    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disabled", foreground="grey", background="#eeeeee")
 
-    Shared.taskDb.StoreTask(taskId, "New Task", "")
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT,   EditorDisabling)
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_START_MAIN_LOOP, EditorDisabling)
+
+
+def CreateNewTaskByUser(evnt: ActEvnt):
+    taskId = GlobVals.taskIdCount
+    GlobVals.taskIdCount += 1
+
+    GlobDbs.currDb.StoreTask(taskId, "New Task", "")
     AddTaskList(taskId)
     UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
 
@@ -31,20 +39,20 @@ def DeleteSelectedTask(evnt: ActEvnt):
         return
     DeleteTaskList(iid)
     ClearDisplay()
-    idx, title, detail = Shared.taskDb.RemoveTask(iid)
+    idx, title, detail = GlobDbs.currDb.RemoveTask(iid)
     assert idx != -1, "Check your code..."
-    if Shared.taskDb is g_taskDb:
-        g_taskDbDel.StoreTask(idx, title, detail)
+    if GlobDbs.currDb is GlobDbs.taskDb:
+        GlobDbs.taskDbDel.StoreTask(idx, title, detail)
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT, DeleteSelectedTask)
 
 
 def RecoverOneDeletedTask(evnt: ActEvnt):
-    taskId, title, detail = g_taskDbDel.GetLastTask()
+    taskId, title, detail = GlobDbs.taskDbDel.GetLastTask()
     if taskId == -1:
         return
-    g_taskDbDel.RemoveTask(taskId)
-    g_taskDb.StoreTask(taskId, title, detail)
+    GlobDbs.taskDbDel.RemoveTask(taskId)
+    GlobDbs.taskDb.StoreTask(taskId, title, detail)
 
     AddTaskList(taskId)
     UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
@@ -56,7 +64,7 @@ def UpdateTaskDbOnModify(evnt: ActEvnt):
     iid = GetSelectedTaskIid()
     if iid != -1:
         title, detail = GetDisplayingTask()
-        Shared.taskDb.UpdateTask(iid, title, detail)
+        GlobDbs.currDb.UpdateTask(iid, title, detail)
         UpdateTaskList(iid, title)
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_EDIT_TITLE,  UpdateTaskDbOnModify)
@@ -67,7 +75,7 @@ def MoveUpSelectedTask(evnt: ActEvnt):
     iid = GetSelectedTaskIid()
     if iid == -1:
         return
-    Shared.taskDb.MoveUp(iid)
+    GlobDbs.currDb.MoveUp(iid)
     RefreshTaskList()
     UiItems.taskList.selection_set(iid)
 
@@ -78,7 +86,7 @@ def MoveDownSelectedTask(evnt: ActEvnt):
     iid = GetSelectedTaskIid()
     if iid == -1:
         return
-    Shared.taskDb.MoveDn(iid)
+    GlobDbs.currDb.MoveDn(iid)
     RefreshTaskList()
     UiItems.taskList.selection_set(iid)
 
@@ -87,11 +95,11 @@ ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DN_BUT, MoveDownSelectedTask)
 
 def SwitchToBin(evnt: ActEvnt):
     ClearDisplay()
-    Shared.taskDb=g_taskDbDel
+    GlobDbs.currDb = GlobDbs.taskDbDel
     _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="disabled")
-    _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="disabled", foreground="grey")
+    DisableEditor()
     UiItems.delBut.config(text="DEL!!", foreground="red")
-    UiItems.binCheckBut.config(foreground="red", activeforeground="red")
+    UiItems.binCheckBox.config(foreground="red", activeforeground="red")
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_TO_BIN, SwitchToBin)
@@ -99,11 +107,11 @@ ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_TO_BIN, SwitchToBin)
 
 def SwitchBackFromBin(evnt: ActEvnt):
     ClearDisplay()
-    Shared.taskDb=g_taskDb
+    GlobDbs.currDb = GlobDbs.taskDb
     _ConfigAttr(UiItems.addBut, UiItems.recBut, UiItems.upBut, UiItems.dnBut, state="normal")
-    _ConfigAttr(UiItems.editTitle, UiItems.editDetail, state="normal", foreground="black")
+    # EnableEditor()
     UiItems.delBut.config(text="DEL", foreground="black")
-    UiItems.binCheckBut.config(foreground="black", activeforeground="black")
+    UiItems.binCheckBox.config(foreground="black", activeforeground="black")
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_BACK_FROM_BIN, SwitchBackFromBin)

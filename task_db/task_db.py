@@ -1,4 +1,4 @@
-class _TaskDbBase():
+class TaskDbMgr():
     taskDb = {}     # {id: [title, detail]}
     taskOrder = []
 
@@ -70,7 +70,3 @@ class _TaskDbBase():
         idx = self.taskOrder[-1]
         title, detail = self.taskDb[idx]
         return idx, title, detail
-
-
-g_taskDb = _TaskDbBase()
-g_taskDbDel = _TaskDbBase()

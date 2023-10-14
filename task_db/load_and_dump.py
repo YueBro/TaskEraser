@@ -1,8 +1,7 @@
 import os
 import shutil
 import json
-from task_db import g_taskDb, g_taskDbDel
-from logic.bind_func import Shared
+from misc.shared import GlobVals, GlobDbs
 from version_ctrl import ReVersionLocalInfo, g_ver
 
 
@@ -43,11 +42,11 @@ def Load(path):
         taskDbDeleted = {int(k): v for k,v in localInfo["taskDbDeleted"].items()}
         taskOrderDeleted = localInfo["taskOrderDeleted"]
         taskIdCount = localInfo["taskIdCount"]
-        g_taskDb.taskDb = taskDb
-        g_taskDb.taskOrder = taskOrder
-        g_taskDbDel.taskDb = taskDbDeleted
-        g_taskDbDel.taskOrder = taskOrderDeleted
-        Shared.taskIdCount = taskIdCount
+        GlobDbs.taskDb.taskDb = taskDb
+        GlobDbs.taskDb.taskOrder = taskOrder
+        GlobDbs.taskDbDel.taskDb = taskDbDeleted
+        GlobDbs.taskDbDel.taskOrder = taskOrderDeleted
+        GlobVals.taskIdCount = taskIdCount
     except FileNotFoundError:
         print("Warning: local file load fail", "(FileNotFoundError)")
         _MakeCopy(path)
@@ -62,11 +61,11 @@ def Load(path):
 def Dump(path):
     toDump = {
         "ver": g_ver,
-        "taskDb": g_taskDb.taskDb,
-        "taskOrder": g_taskDb.taskOrder,
-        "taskDbDeleted": g_taskDbDel.taskDb,
-        "taskOrderDeleted": g_taskDbDel.taskOrder,
-        "taskIdCount": Shared.taskIdCount
+        "taskDb": GlobDbs.taskDb.taskDb,
+        "taskOrder": GlobDbs.taskDb.taskOrder,
+        "taskDbDeleted": GlobDbs.taskDbDel.taskDb,
+        "taskOrderDeleted": GlobDbs.taskDbDel.taskOrder,
+        "taskIdCount": GlobVals.taskIdCount
     }
     with open(path, "w") as f:
         json.dump(toDump, f, indent=2)
