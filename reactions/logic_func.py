@@ -15,11 +15,11 @@ def ShowTaskOnUserSelection(evnt: ActEvnt):
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_TREEVIEW_SELECT, ShowTaskOnUserSelection)
 
 
-def EditorDisabling(evnt: ActEvnt):
-    _ConfigAttr(UiItems.titleEditor, UiItems.detailEditor, state="disabled", foreground="grey", background="#eeeeee")
+def DisableEditorOnEvnt(evnt: ActEvnt):
+    DisableEditor()
 
-ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT,   EditorDisabling)
-ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_START_MAIN_LOOP, EditorDisabling)
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT,   DisableEditorOnEvnt)
+ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_START_MAIN_LOOP, DisableEditorOnEvnt)
 
 
 def CreateNewTaskByUser(evnt: ActEvnt):
@@ -43,6 +43,7 @@ def DeleteSelectedTask(evnt: ActEvnt):
     assert idx != -1, "Check your code..."
     if GlobDbs.currDb is GlobDbs.taskDb:
         GlobDbs.taskDbDel.StoreTask(idx, title, detail)
+    DisableEditor()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_CLICK_DEL_BUT, DeleteSelectedTask)
 
@@ -100,6 +101,8 @@ def SwitchToBin(evnt: ActEvnt):
     DisableEditor()
     UiItems.delBut.config(text="DEL!!", foreground="red")
     UiItems.binCheckBox.config(foreground="red", activeforeground="red")
+    UiItems.menuTopo["Action"].menuWidgt.entryconfigure("Add", state="disable")
+    UiItems.menuTopo["Action"].menuWidgt.entryconfigure("Rec", state="disable")
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_TO_BIN, SwitchToBin)
@@ -112,6 +115,8 @@ def SwitchBackFromBin(evnt: ActEvnt):
     # EnableEditor()
     UiItems.delBut.config(text="DEL", foreground="black")
     UiItems.binCheckBox.config(foreground="black", activeforeground="black")
+    UiItems.menuTopo["Action"].menuWidgt.entryconfigure("Add", state="normal")
+    UiItems.menuTopo["Action"].menuWidgt.entryconfigure("Rec", state="normal")
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_BACK_FROM_BIN, SwitchBackFromBin)

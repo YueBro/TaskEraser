@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from widgets.mytext import MyText
+from menu_topo import MenuNode
 
 
 class UiItems:
@@ -15,3 +16,4 @@ class UiItems:
     detailEditor: MyText = None
     binCheckBoxVal: tk.BooleanVar = None
     binCheckBox: tk.Checkbutton = None
+    menuTopo: MenuNode = None
