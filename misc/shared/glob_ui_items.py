@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from widgets.mytext import MyText
-from menu_topo import MenuNode
+from modules.tk_widgets.mytext import MyText
+from modules.menu_topo import MenuTopoNode
 
 
 class UiItems:
@@ -16,4 +16,4 @@ class UiItems:
     detailEditor: MyText = None
     binCheckBoxVal: tk.BooleanVar = None
     binCheckBox: tk.Checkbutton = None
-    menuTopo: MenuNode = None
+    menuTopo: MenuTopoNode = None

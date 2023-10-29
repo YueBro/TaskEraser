@@ -4,22 +4,22 @@ from reactions.action_func import (
     OnClickDelBut,
     OnClickRecBut,
 )
-from menu_topo import MenuNode, Separator
+from modules.menu_topo import MenuTopoNode, MenuTopoSeparator
 from typing import Any
 
 
 MENU_TOPO = \
-MenuNode(subNodes=[
-    MenuNode(label="Action", subNodes=[
-        MenuNode(label="Add", accelerator="Ctrl+N", fun=OnClickAddBut),
-        MenuNode(label="Del", accelerator="Ctrl+D", fun=OnClickDelBut),
-        Separator(),
-        MenuNode(label="Rec", accelerator="Ctrl+R", fun=OnClickRecBut),
+MenuTopoNode(subNodes=[
+    MenuTopoNode(label="Action", subNodes=[
+        MenuTopoNode(label="Add", accelerator="Ctrl+N", fun=OnClickAddBut),
+        MenuTopoNode(label="Del", accelerator="Ctrl+D", fun=OnClickDelBut),
+        MenuTopoSeparator(),
+        MenuTopoNode(label="Rec", accelerator="Ctrl+R", fun=OnClickRecBut),
     ])
 ])
 
 
-def SetupMenu(nodeRoot: MenuNode, menuRoot: Any):
+def SetupMenu(nodeRoot: MenuTopoNode, menuRoot: Any):
     menu = None
     if nodeRoot.HasSubs():
         menu = tk.Menu(menuRoot, tearoff=False)
@@ -28,9 +28,9 @@ def SetupMenu(nodeRoot: MenuNode, menuRoot: Any):
             assert isinstance(menuRoot, tk.Menu)
             menuRoot.add_cascade(label=nodeRoot.label, menu=menu)
         for subNode in nodeRoot.subNodes:
-            if isinstance(subNode, Separator):
+            if isinstance(subNode, MenuTopoSeparator):
                 menu.add_separator()
-            elif isinstance(subNode, MenuNode):
+            elif isinstance(subNode, MenuTopoNode):
                 SetupMenu(subNode, menu)
             else:
                 raise Exception("Unknown node type")

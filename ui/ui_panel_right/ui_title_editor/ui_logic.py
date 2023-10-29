@@ -1,4 +1,4 @@
-from widgets.mytext import MyText
+from modules.tk_widgets.mytext import MyText
 from reactions.action_func import OnModifyTaskTitle
 
 

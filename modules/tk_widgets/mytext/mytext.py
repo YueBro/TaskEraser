@@ -1,5 +1,5 @@
 import tkinter as tk
-from widgets.undo_buffer import UndoBuffer
+from modules.undo_buffer import UndoBuffer
 
 
 class MyText(tk.Text):

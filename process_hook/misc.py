@@ -23,7 +23,7 @@ def PeriodicAutoSave(evnt, period):
     count = 0
     while not evnt.is_set():
         if count == 0:
-            print("PeriodicAutoSave", "(auto save!)")
+            print("PeriodicAutoSave (auto save!)")
             Dump(g_localStoragePth)
         count = (count + 1) % period
         sleep(1)

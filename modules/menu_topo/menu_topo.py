@@ -6,7 +6,7 @@ from inspect import isfunction
 from typing import List
 
 
-class MenuNode:
+class MenuTopoNode:
     def __init__(self, label: str = None, accelerator: str = None, subNodes: list = None, fun = ...) -> None:
         if label is None:
             assert subNodes is not None
@@ -15,10 +15,10 @@ class MenuNode:
         else:
             assert fun is ..., f"{label=}, {accelerator=}, {fun=}"
             assert accelerator is None
-        assert all([isinstance(node, MenuNode) or isinstance(node, Separator) for node in subNodes])
+        assert all([isinstance(node, MenuTopoNode) or isinstance(node, MenuTopoSeparator) for node in subNodes])
         assert fun is ... or isfunction(fun)
         self.label: str = label
-        self.subNodes: List[MenuNode] = subNodes
+        self.subNodes: List[MenuTopoNode] = subNodes
         self.accelerator = accelerator
         self.fun = fun
         self.menuWidgt: tk.Menu = None      # tk.Menu is stored here (after calling SetupMenu()), for changing menu states
@@ -29,7 +29,7 @@ class MenuNode:
     def IsRoot(self) -> bool:
         return self.label is None
 
-    def __getitem__(self, other: str) -> MenuNode:
+    def __getitem__(self, other: str) -> MenuTopoNode:
         assert isinstance(other, str)
         for node in self.subNodes:
             if node.label == other:
@@ -40,5 +40,5 @@ class MenuNode:
         return f"label={self.label} accelerator={self.accelerator}"
 
 
-class Separator:
+class MenuTopoSeparator:
     pass

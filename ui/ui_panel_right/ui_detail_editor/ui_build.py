@@ -1,6 +1,6 @@
 import tkinter as tk
 from misc.shared import UiItems
-from widgets.mytext import MyText
+from modules.tk_widgets.mytext import MyText
 
 from .ui_logic import BindDetailEditorOnModify
 
