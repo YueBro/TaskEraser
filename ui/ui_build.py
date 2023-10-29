@@ -3,6 +3,8 @@ from .ui_menu_bar import *
 from .ui_panel_left import *
 from .ui_panel_right import *
 
+from .ui_logic import SetupTopLevelShortCuts
+
 
 def BuildUi():
     window = tk.Tk()
@@ -11,3 +13,5 @@ def BuildUi():
     BuildMenuBar(window)
     BuildUiPanelL(window)
     BuildUiPanelR(window)
+
+    SetupTopLevelShortCuts(window)

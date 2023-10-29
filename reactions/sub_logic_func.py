@@ -1,5 +1,5 @@
 from functools import wraps
-from misc.shared import UiItems, GlobDbs
+from misc.shared import UiItems, GlobDbs, GlobVals
 
 from misc import _ConfigAttr
 
@@ -23,23 +23,29 @@ def _KeepEditorStateDeco(fun):
     return _fun
 
 
-def AddTaskList(taskId):
+def AddTaskList(taskId, doSelectionSet = False):
     title, _ = GlobDbs.currDb.GetTask(taskId)
     UiItems.taskList.insert("", 0, iid=taskId, values=(str(taskId), title))
+    if doSelectionSet:
+        UiItems.taskList.selection_set(taskId)  # trigger "ClickTaskList"
+        GlobVals.selectedIid = taskId
 
 
 def UpdateTaskList(taskId, title):
     UiItems.taskList.item(taskId, values=(str(taskId), title))
     
 
-def DeleteTaskList(taskId):
+def DropFromTaskList(taskId):
     UiItems.taskList.delete(str(taskId))
+    if taskId == GlobVals.selectedIid:
+        GlobVals.selectedIid = -1
 
 
 def ClearTaskList():
     UiItems.taskList.delete(
         *UiItems.taskList.get_children()
     )
+    GlobVals.selectedIid = -1
 
 
 def RefreshTaskList():
@@ -57,17 +63,18 @@ def DisplayTask(taskId):
 
 
 @_KeepEditorStateDeco
-def ClearDisplay():
+def ClearEditorDisplay():
     UiItems.titleEditor.set_text("")
     UiItems.detailEditor.set_text("")
 
 
-def GetSelectedTaskIid() -> int:
+def GetTreeviewSelTaskIid() -> int:
     selectIid = UiItems.taskList.selection()
     if len(selectIid) == 0:
         selectIid = -1
     else:
         selectIid = int(selectIid[0])
+    GlobVals.selectedIid = selectIid
     return selectIid
 
 

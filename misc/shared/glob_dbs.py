@@ -5,6 +5,6 @@ class GlobDbs:
     taskDb = TaskDbMgr()
     taskDbDel = TaskDbMgr()
 
-    currDb = None
+    currDb: TaskDbMgr = None
 
 GlobDbs.currDb = GlobDbs.taskDb

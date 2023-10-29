@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from misc.shared import UiItems
 
-from .ui_logic import BindTaskListOnSelection
+from .ui_logic import SetupTaskListBind
 
 
 attrs = (
@@ -24,5 +24,5 @@ def BuildUiTaskList(root):
         taskList.heading(attr["str"], text=attr["str"])
     taskList.place(relx=0, rely=0, relheight=1, relwidth=1)
 
-    BindTaskListOnSelection(taskList)
+    SetupTaskListBind(taskList)
     UiItems.taskList = taskList

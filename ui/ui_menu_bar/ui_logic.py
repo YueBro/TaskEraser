@@ -1,8 +1,10 @@
 import tkinter as tk
 from reactions.action_func import (
-    OnClickAddBut,
-    OnClickDelBut,
-    OnClickRecBut,
+    OnClickMenuAdd,
+    OnClickMenuDel,
+    OnClickMenuRec,
+    OnClickMenuUp,
+    OnClickMenuDn,
 )
 from modules.menu_topo import MenuTopoNode, MenuTopoSeparator
 from typing import Any
@@ -10,12 +12,17 @@ from typing import Any
 
 MENU_TOPO = \
 MenuTopoNode(subNodes=[
-    MenuTopoNode(label="Action", subNodes=[
-        MenuTopoNode(label="Add", accelerator="Ctrl+N", fun=OnClickAddBut),
-        MenuTopoNode(label="Del", accelerator="Ctrl+D", fun=OnClickDelBut),
+    MenuTopoNode(label="Edit", subNodes=[
+        MenuTopoNode(label="Add Task", accelerator="Ctrl+N", fun=OnClickMenuAdd),
+        MenuTopoNode(label="Del Task", accelerator="Ctrl+D", fun=OnClickMenuDel),
+        MenuTopoNode(label="Rec Task", accelerator="Ctrl+R", fun=OnClickMenuRec),
         MenuTopoSeparator(),
-        MenuTopoNode(label="Rec", accelerator="Ctrl+R", fun=OnClickRecBut),
-    ])
+        MenuTopoNode(label="Move Task Up", accelerator="Ctrl+←", fun=OnClickMenuUp),
+        MenuTopoNode(label="Move Task Down", accelerator="Ctrl+→", fun=OnClickMenuDn),
+    ]),
+    MenuTopoNode(label="Reorder", subNodes=[
+        MenuTopoSeparator(),
+    ]),
 ])
 
 
