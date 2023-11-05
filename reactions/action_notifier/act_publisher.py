@@ -39,7 +39,6 @@ class ActPublisher:
 
     @classmethod
     def RegisterAnyEvnt(cls, subscriber: Union[Any, ActSubscriber]):
-        print(subscriber, type(subscriber))
         if isinstance(subscriber, ActSubscriber):
             cls.AnySubscribers.append(subscriber)
         elif isfunction(subscriber):

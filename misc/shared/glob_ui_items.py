@@ -4,6 +4,8 @@ from tkinter import ttk
 from modules.tk_widgets.mytext import MyText
 from modules.menu_topo import MenuTopoNode
 
+from typing import Dict
+
 
 class UiItems:
     taskList: ttk.Treeview = None
@@ -16,4 +18,4 @@ class UiItems:
     detailEditor: MyText = None
     binCheckBoxVal: tk.BooleanVar = None
     binCheckBox: tk.Checkbutton = None
-    menuTopo: MenuTopoNode = None
+    menuItems: Dict[str, MenuTopoNode] = {}

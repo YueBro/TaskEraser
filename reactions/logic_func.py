@@ -107,8 +107,8 @@ def SwitchToBin(evnt: ActEvnt):
     DisableEditor()
     UiItems.delBut.config(text="DEL!!", foreground="red")
     UiItems.binCheckBox.config(foreground="red", activeforeground="red")
-    UiItems.menuTopo["Edit"].menuWidgt.entryconfigure("Add Task", state="disable")
-    UiItems.menuTopo["Edit"].menuWidgt.entryconfigure("Rec Task", state="disable")
+    UiItems.menuItems["NewTaskMenuItm"].SetEnable(False)
+    UiItems.menuItems["RecTaskMenuItm"].SetEnable(False)
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_TO_BIN, SwitchToBin)
@@ -121,8 +121,8 @@ def SwitchBackFromBin(evnt: ActEvnt):
     # EnableEditor()
     UiItems.delBut.config(text="DEL", foreground="black")
     UiItems.binCheckBox.config(foreground="black", activeforeground="black")
-    UiItems.menuTopo["Edit"].menuWidgt.entryconfigure("Add Task", state="normal")
-    UiItems.menuTopo["Edit"].menuWidgt.entryconfigure("Rec Task", state="normal")
+    UiItems.menuItems["NewTaskMenuItm"].SetEnable(True)
+    UiItems.menuItems["RecTaskMenuItm"].SetEnable(True)
     RefreshTaskList()
 
 ActPublisher.RegisterTheToEvntOnly(ACT_EVNT_SWITCH_BACK_FROM_BIN, SwitchBackFromBin)
