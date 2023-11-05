@@ -13,12 +13,12 @@ from typing import Any
 MENU_TOPO = \
 MenuTopoNode(subNodes=[
     MenuTopoNode(label="Edit", subNodes=[
-        MenuTopoNode(label="Add Task", accelerator="Ctrl+N", fun=OnClickMenuAdd),
+        MenuTopoNode(label="New Task", accelerator="Ctrl+N", fun=OnClickMenuAdd),
         MenuTopoNode(label="Del Task", accelerator="Ctrl+D", fun=OnClickMenuDel),
         MenuTopoNode(label="Rec Task", accelerator="Ctrl+R", fun=OnClickMenuRec),
         MenuTopoSeparator(),
-        MenuTopoNode(label="Move Task Up", accelerator="Ctrl+←", fun=OnClickMenuUp),
-        MenuTopoNode(label="Move Task Down", accelerator="Ctrl+→", fun=OnClickMenuDn),
+        MenuTopoNode(label="Move Task Up", accelerator="Ctrl+↑", fun=OnClickMenuUp),
+        MenuTopoNode(label="Move Task Down", accelerator="Ctrl+↓", fun=OnClickMenuDn),
     ]),
     MenuTopoNode(label="Reorder", subNodes=[
         MenuTopoSeparator(),
