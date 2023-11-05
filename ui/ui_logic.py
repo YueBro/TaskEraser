@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from reactions.action_func import (
     OnPressShortCutAdd,
@@ -31,3 +32,9 @@ def SetupTopLevelShortCuts(root: tk.Tk):
 
     root.bind("<Control-Up>", OnPressShortCutUp)
     root.bind("<Control-Down>", OnPressShortCutDn)
+
+
+def SetWindowAttributes(root: tk.Tk):
+    title = "TaskEraser (DEVELOP VERSION)" if (os.path.isfile("./DEVELOPING")) \
+            else "TaskEraser"
+    root.title(title)

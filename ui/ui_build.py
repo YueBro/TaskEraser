@@ -3,7 +3,7 @@ from .ui_menu_bar import *
 from .ui_panel_left import *
 from .ui_panel_right import *
 
-from .ui_logic import SetupTopLevelShortCuts
+from .ui_logic import SetupTopLevelShortCuts, SetWindowAttributes
 
 
 def BuildUi():
@@ -15,3 +15,4 @@ def BuildUi():
     BuildUiPanelR(window)
 
     SetupTopLevelShortCuts(window)
+    SetWindowAttributes(window)
